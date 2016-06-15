@@ -1,0 +1,136 @@
+<?php
+require_once 'scraper.search.inc';
+
+/**
+ * @file
+ * Scraper Twitter - find some emails.. module.
+ *
+ * @author: Owen Williams
+ *
+ */
+
+/**
+* Implements hook_menu().
+*/
+function scraper_menu() {
+  $items['scraper/search'] = array(
+    'title' => 'Searcher',
+    'page callback' => 'scraper_search_ajax',
+    'access callback' => TRUE,
+    'page arguments' => array(),
+    'type' => MENU_CALLBACK,
+    // 'file' => 'models_forms.create.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function scraper_block_info() {
+  $blocks['search_form'] = array(
+    'info' => t('Scraper - search block'),
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function scraper_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'search_form':
+      $block['subject'] = t('Searcher');
+      $block['content'] = scraper_searcher();
+    break;
+  }
+  return $block;
+}
+
+function scraper_searcher() {
+  $search_form = drupal_get_form('scraper_search_form');
+  return drupal_render($search_form);
+}
+
+function scraper_search_ajax() {
+  $params = json_decode(file_get_contents('php://input'), TRUE);
+
+  if (!empty($params['search_terms'])) {
+
+  $terms = str_replace(',', ' ', $params['search_terms']);
+  $terms = str_replace('  ', ' ', $terms);
+  $terms = urlencode($terms);
+
+  /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
+    $settings = array(
+      'oauth_access_token' => "328416372-LKKl8TQMmcRLkbOuF31f4oNPcoKn4vKEBHqUmw9g",
+      'oauth_access_token_secret' => "7nzP4qbuNeqCvE7QUNHJ6AXdURubXie22JoiTk",
+      'consumer_key' => "C35vWXtEYi2ND6E1DEtMA",
+      'consumer_secret' => "Bglu3sttmouKbOVdFZTMKCFTZlPV6IM8NBduDBD6UJU"
+    );
+
+    /** Note: Set the GET field BEFORE calling buildOauth(); **/
+    $url = 'https://api.twitter.com/1.1/search/tweets.json';
+    $getfield = '?q=%40twitterapi';
+
+    // print_r($terms);
+
+    // around UK >
+    // 37.781157,-122.398720,1mi
+    // 54.213861,-4.548340,576.7529226763561km
+
+    $getfield = '?q=' . $terms . '&count=100&lang=en-gb&geocode=54.213861,-4.548340,576.7529226763561km';
+    $requestMethod = 'GET';
+    $twitter = new TwitterAPIExchange($settings);
+    $result = $twitter->setGetfield($getfield)
+       ->buildOauth($url, $requestMethod)
+       ->performRequest();
+
+    print_r($result);
+
+  }
+
+}
+
+function scraper_init() {
+
+  /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
+  $settings = array(
+    'oauth_access_token' => "328416372-LKKl8TQMmcRLkbOuF31f4oNPcoKn4vKEBHqUmw9g",
+    'oauth_access_token_secret' => "7nzP4qbuNeqCvE7QUNHJ6AXdURubXie22JoiTk",
+    'consumer_key' => "C35vWXtEYi2ND6E1DEtMA",
+    'consumer_secret' => "Bglu3sttmouKbOVdFZTMKCFTZlPV6IM8NBduDBD6UJU"
+  );
+
+  // /** URL for REST request, see: https://dev.twitter.com/docs/api/1.1/ **/
+  // $url = 'https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi';
+  // $requestMethod = 'POST';
+
+  // /** POST fields required by the URL above. See relevant docs as above **/
+  // $postfields = array(
+  //   'screen_name' => 'usernameToBlock',
+  //   'skip_status' => '1'
+  // );
+  // /** Perform the request and echo the response **/
+  // $twitter = new TwitterAPIExchange($settings);
+  // $result = $twitter->buildOauth($url, $requestMethod)
+  //      ->setPostfields($postfields)
+  //      ->performRequest();
+
+  /** Note: Set the GET field BEFORE calling buildOauth(); **/
+  $url = 'https://api.twitter.com/1.1/search/tweets.json';
+  $getfield = '?q=%40twitterapi';
+
+  // $terms = urlencode('hilarious filter:links');
+  // $terms = urlencode('twitter filter:links');
+  // $getfield = '?q=' . $terms;
+  // $requestMethod = 'GET';
+  // $twitter = new TwitterAPIExchange($settings);
+  // $result = $twitter->setGetfield($getfield)
+  //    ->buildOauth($url, $requestMethod)
+  //    ->performRequest();
+
+  // dpm(json_decode($result));
+}

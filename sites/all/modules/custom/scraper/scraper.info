@@ -1,0 +1,6 @@
+name = Twitter Scraper
+description = Twitter API Scraper
+package = Twitter Scraper
+core = 7.x
+
+files[] = TwitterAPIExchange.php
