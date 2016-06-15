@@ -18,7 +18,12 @@ function scraper_search_form($form, &$form_state){
   $text .= '<li>fitness, blogger</li>';
   $text .= '<li>chef, blogger</li>';
   $text .= '<li>bookings or #bookings</li>';
-  $text .= '<ul></div>';
+  $text .= '<li>bookings or #bookings</li>';
+  $text .= '<li>exact phrases: "enquiries"</li>';
+  $text .= '<li>gym OR celebrity, bookings</li>';
+  $text .= '</ul>';
+  $text .= '<p>For further search techniques - see the <a href="https://dev.twitter.com/rest/public/search" target="_blank">Twitter Search Api</a>.</p>';
+  $text .= '</div>';
 
   $form['textstuff'] = array(
     '#markup' => $text,

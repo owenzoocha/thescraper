@@ -18,6 +18,18 @@
       box-shadow: none;
     }
 
+    a {
+      color: $eq-red;
+    }
+
+    ul {
+      font-size: 12px;
+      padding: 0;
+      li {
+        list-style: inside;
+      }
+    }
+
     #export-emails {
       a {
         color: #fff;

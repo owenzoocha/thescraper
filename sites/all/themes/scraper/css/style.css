@@ -5816,6 +5816,13 @@ button.close {
     font-size: 13px; }
   .col-sm-3 .well input#edit-terms {
     box-shadow: none; }
+  .col-sm-3 .well a {
+    color: #FC5254; }
+  .col-sm-3 .well ul {
+    font-size: 12px;
+    padding: 0; }
+    .col-sm-3 .well ul li {
+      list-style: inside; }
   .col-sm-3 .well #export-emails a {
     color: #fff;
     padding: 5px 10px;
