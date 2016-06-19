@@ -35,8 +35,6 @@ angular.module('Scraper', [
 
     DoStuff.searchTwitter(terms).then(function(data){
 
-      console.log('hello?!');
-
       jQuery('#scraper-results').html('');
 
       var content = '';
@@ -54,8 +52,12 @@ angular.module('Scraper', [
 
             // console.log(v);
 
-            var emailFromTweet = v['text'].match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-            var emailFromDesc = v['user']['description'].match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+            if (v['text']) {
+              var emailFromTweet = v['text'].match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+            }
+            if (v['user']['description']) {
+              var emailFromDesc = v['user']['description'].match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+            }
 
             if (emailFromTweet) {
               emailList[emailFromTweet] = true;

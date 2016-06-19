@@ -91,8 +91,8 @@ function scraper_search_ajax() {
 
     $now = date('Y-m-d', strtotime('now'));
 
-    // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100';
-    $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100';
+    // Aounrd UK
+    $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&geocode=54.213861,-4.548340,576.7529226763561km';
     $requestMethod = 'GET';
     $twitter = new TwitterAPIExchange($settings);
     $result = $twitter->setGetfield($getfield)
@@ -104,11 +104,24 @@ function scraper_search_ajax() {
     $last_id = ($res->statuses[$count]->id - 1);
     $results_array[] = $res->statuses;
 
+    // Americas - 12.554564,-92.812500
+    // lat=8.407168&clng=-93.515625&r=8545.059796514346
+    // https://www.freemaptools.com/radius-around-point.htm?clat=37.718590&clng=-101.953125&r=4022.1373212313893&lc=FFFFFF&lw=1&fc=00FF00&mt=r
+    $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&geocode=37.718590,-101.953125,4022.1373212313893km';
+    $requestMethod = 'GET';
+    $twitter = new TwitterAPIExchange($settings);
+    $result = $twitter->setGetfield($getfield)
+       ->buildOauth($url, $requestMethod)
+       ->performRequest();
+
+    $res = json_decode($result);
+    $results_array[] = $res->statuses;
+
     for ($i=1; $i <= 8; $i++) {
 
       $now = date('Y-m-d', strtotime("$now - 1 day"));
 
-      $getfield = '?q=' . $terms . '&result_type=*recent&count=100&until=' . $now;
+      $getfield = '?q=' . $terms . '&result_type=*recent&count=100&geocode=54.213861,-4.548340,576.7529226763561km&until=' . $now;
       // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
       $requestMethod = 'GET';
       $twitter = new TwitterAPIExchange($settings);
@@ -119,6 +132,52 @@ function scraper_search_ajax() {
       $res = json_decode($result);
       $count = sizeof($res->statuses) - 1;
       $last_id = ($res->statuses[$count]->id - 1);
+      $results_array[] = $res->statuses;
+
+      $getfield = '?q=' . $terms . '&result_type=*popular&count=100&geocode=54.213861,-4.548340,576.7529226763561km&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
+      $results_array[] = $res->statuses;
+
+
+      $getfield = '?q=' . $terms . '&result_type=*recent&count=100&geocode=37.718590,-101.953125,4022.1373212313893km&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
+      $results_array[] = $res->statuses;
+
+      $getfield = '?q=' . $terms . '&result_type=*popular&count=100&geocode=37.718590,-101.953125,4022.1373212313893km&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
+      $results_array[] = $res->statuses;
+
+
+      $getfield = '?q=' . $terms . '&result_type=*recent&count=100&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
       $results_array[] = $res->statuses;
 
       $getfield = '?q=' . $terms . '&result_type=*popular&count=100&until=' . $now;
