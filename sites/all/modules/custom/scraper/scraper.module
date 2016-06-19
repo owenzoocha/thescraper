@@ -75,21 +75,79 @@ function scraper_search_ajax() {
     $url = 'https://api.twitter.com/1.1/search/tweets.json';
     $getfield = '?q=%40twitterapi';
 
-    // print_r($terms);
-
     // around UK >
     // 37.781157,-122.398720,1mi
     // 54.213861,-4.548340,576.7529226763561km
 
     // $getfield = '?q=' . $terms . '&count=100&lang=en-gb&geocode=54.213861,-4.548340,576.7529226763561km';
-    $getfield = '?q=' . $terms . '&count=100&lang=en-gb';
+    // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&until=2016-06-16';
+    // $requestMethod = 'GET';
+    // $twitter = new TwitterAPIExchange($settings);
+    // $result = $twitter->setGetfield($getfield)
+    //    ->buildOauth($url, $requestMethod)
+    //    ->performRequest();
+
+    $results_array = array();
+
+    $now = date('Y-m-d', strtotime('now'));
+
+    // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100';
+    $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100';
     $requestMethod = 'GET';
     $twitter = new TwitterAPIExchange($settings);
     $result = $twitter->setGetfield($getfield)
        ->buildOauth($url, $requestMethod)
        ->performRequest();
 
-    print_r($result);
+    $res = json_decode($result);
+    $count = sizeof($res->statuses) - 1;
+    $last_id = ($res->statuses[$count]->id - 1);
+    $results_array[] = $res->statuses;
+
+    for ($i=1; $i <= 8; $i++) {
+
+      $now = date('Y-m-d', strtotime("$now - 1 day"));
+
+      $getfield = '?q=' . $terms . '&result_type=*recent&count=100&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
+      $count = sizeof($res->statuses) - 1;
+      $last_id = ($res->statuses[$count]->id - 1);
+      $results_array[] = $res->statuses;
+
+      $getfield = '?q=' . $terms . '&result_type=*popular&count=100&until=' . $now;
+      // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      $requestMethod = 'GET';
+      $twitter = new TwitterAPIExchange($settings);
+      $result = $twitter->setGetfield($getfield)
+         ->buildOauth($url, $requestMethod)
+         ->performRequest();
+
+      $res = json_decode($result);
+      $results_array[] = $res->statuses;
+
+
+      // $getfield = '?q=' . $terms . '&result_type=*mixed&count=100&until=' . $now;
+      // // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&max_id=' . $last_id;
+      // $requestMethod = 'GET';
+      // $twitter = new TwitterAPIExchange($settings);
+      // $result = $twitter->setGetfield($getfield)
+      //    ->buildOauth($url, $requestMethod)
+      //    ->performRequest();
+
+      // $res = json_decode($result);
+      // $results_array[] = $res->statuses;
+
+      // dpm($last_id, 'last id...');
+    }
+
+    print_r(json_encode($results_array));
 
   }
 
@@ -105,33 +163,80 @@ function scraper_init() {
     'consumer_secret' => "Bglu3sttmouKbOVdFZTMKCFTZlPV6IM8NBduDBD6UJU"
   );
 
-  // /** URL for REST request, see: https://dev.twitter.com/docs/api/1.1/ **/
-  // $url = 'https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi';
-  // $requestMethod = 'POST';
+  $oo = 'fitness, blogger';
+  $terms = str_replace(',', ' ', $oo);
+  $terms = str_replace('  ', ' ', $terms);
+  $terms = urlencode($terms);
 
-  // /** POST fields required by the URL above. See relevant docs as above **/
-  // $postfields = array(
-  //   'screen_name' => 'usernameToBlock',
-  //   'skip_status' => '1'
-  // );
-  // /** Perform the request and echo the response **/
-  // $twitter = new TwitterAPIExchange($settings);
-  // $result = $twitter->buildOauth($url, $requestMethod)
-  //      ->setPostfields($postfields)
-  //      ->performRequest();
+  /** Set access tokens here - see: https://dev.twitter.com/apps/ **/
+    $settings = array(
+      'oauth_access_token' => "328416372-LKKl8TQMmcRLkbOuF31f4oNPcoKn4vKEBHqUmw9g",
+      'oauth_access_token_secret' => "7nzP4qbuNeqCvE7QUNHJ6AXdURubXie22JoiTk",
+      'consumer_key' => "C35vWXtEYi2ND6E1DEtMA",
+      'consumer_secret' => "Bglu3sttmouKbOVdFZTMKCFTZlPV6IM8NBduDBD6UJU"
+    );
 
-  /** Note: Set the GET field BEFORE calling buildOauth(); **/
-  $url = 'https://api.twitter.com/1.1/search/tweets.json';
-  $getfield = '?q=%40twitterapi';
+    /** Note: Set the GET field BEFORE calling buildOauth(); **/
+    $url = 'https://api.twitter.com/1.1/search/tweets.json';
+    $getfield = '?q=%40twitterapi';
 
-  // $terms = urlencode('hilarious filter:links');
-  // $terms = urlencode('twitter filter:links');
-  // $getfield = '?q=' . $terms;
-  // $requestMethod = 'GET';
-  // $twitter = new TwitterAPIExchange($settings);
-  // $result = $twitter->setGetfield($getfield)
-  //    ->buildOauth($url, $requestMethod)
-  //    ->performRequest();
+    // print_r($terms);
 
-  // dpm(json_decode($result));
+    // around UK >
+    // 37.781157,-122.398720,1mi
+    // 54.213861,-4.548340,576.7529226763561km
+
+    // $results_array = array();
+
+    // $now = date('Y-m-d', strtotime('now'));
+
+    // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=3&until=' . $now;
+    // $requestMethod = 'GET';
+    // $twitter = new TwitterAPIExchange($settings);
+    // $result = $twitter->setGetfield($getfield)
+    //    ->buildOauth($url, $requestMethod)
+    //    ->performRequest();
+
+    // $res = json_decode($result);
+    // $count = sizeof($res->statuses) - 1;
+    // $last_id = ($res->statuses[$count]->id - 1);
+    // $results_array[] = $res->statuses;
+
+    // for ($i=1; $i <= 5; $i++) {
+
+    //   $now = date('Y-m-d', strtotime("$now - 1 day"));
+
+    //   $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=3&until=' . $now;
+    //   // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=3&max_id=' . $last_id;
+    //   $requestMethod = 'GET';
+    //   $twitter = new TwitterAPIExchange($settings);
+    //   $result = $twitter->setGetfield($getfield)
+    //      ->buildOauth($url, $requestMethod)
+    //      ->performRequest();
+
+    //   $res = json_decode($result);
+    //   $count = sizeof($res->statuses) - 1;
+    //   $last_id = ($res->statuses[$count]->id - 1);
+    //   $results_array[] = $res->statuses;
+    //   // dpm($last_id, 'last id...');
+    // }
+
+    // dpm($results_array);
+
+
+
+    // $getfield = '?q=' . $terms . '&count=100&lang=en-gb&geocode=54.213861,-4.548340,576.7529226763561km';
+
+    // $getfield = '?q=' . $terms . '&lang=en-gb&result_type=*recent&count=100&until=2016-06-16';
+    // $requestMethod = 'GET';
+    // $twitter = new TwitterAPIExchange($settings);
+    // $result = $twitter->setGetfield($getfield)
+    //    ->buildOauth($url, $requestMethod)
+    //    ->performRequest();
+
+
+    //    $res = json_decode($result);
+    // dpm($res);
+
+
 }
