@@ -7,14 +7,63 @@ function scraper_search_form($form, &$form_state){
   );
   $form['terms'] = array(
     '#type' => 'textfield',
-    '#description' => t('Enter in your search terms separated with a comma eg:'),
+    '#title' => 'Search Terms:',
+    '#description' => t('Enter your search terms separated with a comma'),
     '#attributes' => array(
       'placeholder' => array('terms..'),
       'ng-model' => 'search.terms',
     ),
   );
 
-  $text = '<div><ul>';
+  // $searches = array(
+  //   'Recent' => 'Recent',
+  //   'Mixed' => 'Mixed',
+  //   'Popular' => 'Popular',
+  // );
+  $form['type'] = array(
+    '#type' => 'select',
+    '#options' => array(),
+    // '#default_value' => array('Recent'),
+    '#title' => t('Tweet Type:'),
+    '#attributes' => array(
+      'ng-model' => 'search.searchtype',
+      'ng-options' => 'r.name for r in tweetType'
+    ),
+  );
+
+  $regions = array('Global', 'North America', 'UK & Ireland');
+  $form['region'] = array(
+    '#type' => 'select',
+    '#options' => array(),
+    // '#default_value' => 'Global',
+    // '#value' => 'Global',
+    '#title' => t('Region:'),
+    '#attributes' => array(
+      'ng-model' => 'search.region',
+      'ng-options' => 'r.name for r in regions'
+    ),
+  );
+
+  $form['bigsearch'] = array(
+    '#type' => 'checkbox',
+    '#options' => array(),
+    '#title' => t('Search all'),
+    '#description' => t('Note: by selecting <strong>search all</strong> - all variations of above will be run. This can take up to 3 minutes to complete. Not recommended to be run often!'),
+    '#attributes' => array(
+      'ng-model' => 'search.bigall',
+    ),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+    '#attributes' => array(
+      'class' => array('btn btn-success btn-block'),
+      // 'ng-click' => 'doLogin()',
+    ),
+  );
+
+  $text = '<div><h3>Examples:</h3><ul>';
   $text .= '<li>fitness, blogger</li>';
   $text .= '<li>chef, blogger</li>';
   $text .= '<li>bookings or #bookings</li>';
@@ -27,15 +76,6 @@ function scraper_search_form($form, &$form_state){
 
   $form['textstuff'] = array(
     '#markup' => $text,
-  );
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Search'),
-    '#attributes' => array(
-      'class' => array('btn btn-success btn-block'),
-      // 'ng-click' => 'doLogin()',
-    ),
   );
 
   $text  = '<div id="results">';
